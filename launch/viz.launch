@@ -1,0 +1,4 @@
+<launch>
+   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find odometry)/config/odometry.rviz" />
+   <param name="robot_description" command="$(find xacro)/xacro.py $(find odometry)/model/me212_robot.xacro"/>
+</launch>
