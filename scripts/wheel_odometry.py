@@ -25,7 +25,7 @@ class wheelOdometry(object):
 		self.vis_pub = rospy.Publisher('visualization_marker', Marker, queue_size=10, latch=True)
 
 		# subsrciber
-		self.sub_odom = rospy.Subscriber("/serial_node/odometry", Float64MultiArray, self.cbPose)
+		self.sub_odom = rospy.Subscriber("/serial_node/pose", Float64MultiArray, self.cbPose)
 
 		self.publish_marker()
 
