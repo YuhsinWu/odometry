@@ -9,7 +9,7 @@ from std_msgs.msg import Int32
 
 class wheelOdometry(object):
 	def __init__(self):
-		
+		self.node_name = rospy.get_name()
 		# subsrciber
 		self.sub_encoderL = rospy.Subscriber("/serial_node/encoderL", Int32, self.cbEncoderL)
 		self.sub_encoderR = rospy.Subscriber("/serial_node/encoderR", Int32, self.cbEncoderR)
