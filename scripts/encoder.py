@@ -4,15 +4,15 @@ import rospy
 
 
 from std_msgs.msg import Float64MultiArray
-from std_msgs.msg import Int32
+from std_msgs.msg import Int16
 
 
 class wheelOdometry(object):
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		# subsrciber
-		self.sub_encoderL = rospy.Subscriber("/serial_node/encoderL", Int32, self.cbEncoderL)
-		self.sub_encoderR = rospy.Subscriber("/serial_node/encoderR", Int32, self.cbEncoderR)
+		self.sub_encoderL = rospy.Subscriber("/serial_node/encoderL", Int16, self.cbEncoderL)
+		self.sub_encoderR = rospy.Subscriber("/serial_node/encoderR", Int16, self.cbEncoderR)
 		rospy.on_shutdown(self.custom_shutdown) # shutdown method
 		rospy.loginfo("[%s] Initialized " %self.node_name)
 		self.now = rospy.get_time() # start
@@ -29,4 +29,4 @@ class wheelOdometry(object):
 if __name__ == "__main__":
 	rospy.init_node("encoder", anonymous = False)
 	odometry_node = wheelOdometry()
-rospy.spin()
+	rospy.spin()
