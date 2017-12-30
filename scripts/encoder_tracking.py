@@ -19,15 +19,10 @@ class wheelOdometry(object):
 		self.yaw = 0 # robot pose theta in radian
 		self.index=2
 		self.turn_index=0
-		#self.sub_pose = rospy.Subscriber("/serial_node/pose", Float64MultiArray, self.cbPose)
+		self.sub_pose = rospy.Subscriber("/serial_node/pose", Float64MultiArray, self.cbPose)
 		self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
-		cmd = Twist2DStamped()
-		cmd.v=0.05
-		cmd.omega=0
-		self.pub_car_cmd.publish(cmd)
 		rospy.on_shutdown(self.custom_shutdown) # shutdown method
 		rospy.loginfo("[%s] Initialized " %self.node_name)
-		self.now = rospy.get_time() # start
 
 	def custom_shutdown(self):
 		rospy.loginfo("[%s] Shutting down..." %self.node_name)
