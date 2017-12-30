@@ -68,10 +68,10 @@ class wheelOdometry(object):
 		if abs(d_target)<tolrce:
 			if turn_dir[self.turn_index]==0: #turn_right_90
 				cmd.v=0.05
-				cmd.omega=-3.14
+				cmd.omega=-1.57
 			else: #turn_left_90
 				cmd.v=0.05
-				cmd.omega=3.14
+				cmd.omega=1.57
 			self.turn_index+=1
 			self.index+=2
 
