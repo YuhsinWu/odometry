@@ -40,7 +40,7 @@ class wheelOdometry(object):
 		self.posx = msg.data[0]*100
 		self.posy = msg.data[1]*100
 		self.yaw = msg.data[2]
-		print self.posx, self.posy
+		print self.posx, self.posy, self.yaw
 		if self.index<=11:
 			self.follow_forward()
 		else:
