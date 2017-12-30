@@ -56,20 +56,20 @@ class wheelOdometry(object):
 				d_error = self.posx-target[self.index]
 				d_target = self.posy-target[self.index+1]
 		if d_error<-tolrce:#turn right
-			cmd.v= 0.5
+			cmd.v= 0.1
 			cmd.omega=-0.5
 		elif d_error>tolrce:#turn_left
-			cmd.v=0.5
+			cmd.v=0.1
 			cmd.omega=0.5
 		else:  #straight_forward
-			cmd.v=0.5
+			cmd.v=0.1
 			cmd.omega=0
 		if abs(d_target)<tolrce:
 			if turn_dir[self.turn_index]==0: #turn_right_90
-				cmd.v=0.5
+				cmd.v=0.1
 				cmd.omega=-3.14
 			else: #turn_left_90
-				cmd.v=0.5
+				cmd.v=0.1
 				cmd.omega=3.14
 			self.turn_index+=1
 			self.index+=2
@@ -77,7 +77,7 @@ class wheelOdometry(object):
 		self.pub_car_cmd.publish(cmd)
 
 	def follow_backward(self):
-		cmd.v=-0.5
+		cmd.v=-0.1
 		cmd.omega=0
 		self.pub_car_cmd.publish(cmd)
 if __name__ == "__main__":
