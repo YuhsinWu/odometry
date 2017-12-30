@@ -3,9 +3,7 @@
 
 	<include file="$(find duckietown)/machines"/>
 
-	<include file="$(find odometry)/launch/encoder_tracking.launch" >
-		<arg name="veh" value="$(arg veh)"/>
-	</include>
+	
 
 	<!-- ============================ Open motors to launch the wheels ============================== -->
     <remap from="inverse_kinematics_node/wheels_cmd" to="wheels_driver_node/wheels_cmd" />
@@ -17,6 +15,8 @@
 	<include file="$(find dagu_car)/launch/wheels_driver_node.launch">
 		<arg name="veh" value="$(arg veh)"/>
 	</include>
-
+	<include file="$(find odometry)/launch/encoder_tracking.launch" >
+		<arg name="veh" value="$(arg veh)"/>
+	</include>
 
 </launch>
