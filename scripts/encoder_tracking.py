@@ -60,12 +60,15 @@ class wheelOdometry(object):
 				d_error = self.posx-target[self.index]
 				d_target = self.posy-target[self.index+1]
 		if d_error<-tolrce:#turn right
+			print 'turn right'
 			cmd.v= 0.05
-			cmd.omega=-0.5
+			cmd.omega=-0.3
 		elif d_error>tolrce:#turn_left
+			print'turn_left'
 			cmd.v=0.05
-			cmd.omega=0.5
+			cmd.omega=0.3
 		else:  #straight_forward
+			print 'straight_forward'
 			cmd.v=0.05
 			cmd.omega=0
 		if abs(d_target)<tolrce: #reach goal
