@@ -28,11 +28,13 @@ class wheelOdometry(object):
 
 	def custom_shutdown(self):
 		rospy.loginfo("[%s] Shutting down..." %self.node_name)
-
+		cmd = Twist2DStamped()
+		cmd.v=0
+		self.pub_car_cmd.publish(cmd)
 
 	def cbPose(self, msg):
-		self.posx = msg.data[0]
-		self.posy = msg.data[1]
+		self.posx = msg.data[0]*100
+		self.posy = msg.data[1]*100
 		self.yaw = msg.data[2]
 		print self.posx, self.posy
 		if self.index<=11:
