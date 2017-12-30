@@ -20,8 +20,7 @@ class wheelOdometry(object):
 		self.posy = 0 # robot position y in meter
 		self.yaw = 0 # robot pose theta in radian
 		self.index=2
-        self.turn_index=0
-		# subsrciber
+		self.turn_index=0
 		self.sub_pose = rospy.Subscriber("/serial_node/pose", Float64MultiArray, self.cbPose)
 		self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
 		
