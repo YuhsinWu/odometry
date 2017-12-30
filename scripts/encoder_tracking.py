@@ -47,13 +47,16 @@ class wheelOdometry(object):
 		dir_x = target[self.index] - target[self.index-2]
 		dir_y = target[self.index+1] - target[self.index-1]
 		if dir_x==0:  #front
+			print 'front'
 			d_error = self.posx-target[self.index]
 			d_target = self.posy-target[self.index+1]
 		elif dir_y==0:
 			if dir_x>0:  #right
+				print 'right'
 				d_error = -(self.posy-target[self.index+1])
 				d_target = self.posx-target[self.index]
 			elif dir_x<0: #left
+				print 'leftt'
 				d_error = self.posx-target[self.index]
 				d_target = self.posy-target[self.index+1]
 		if d_error<-tolrce:#turn right
@@ -65,11 +68,13 @@ class wheelOdometry(object):
 		else:  #straight_forward
 			cmd.v=0.05
 			cmd.omega=0
-		if abs(d_target)<tolrce:
+		if abs(d_target)<tolrce: #reach goal
 			if turn_dir[self.turn_index]==0: #turn_right_90
+				print 'turn_right_90'
 				cmd.v=0.05
 				cmd.omega=-1.57
 			else: #turn_left_90
+				print 'turn_left_90'
 				cmd.v=0.05
 				cmd.omega=1.57
 			self.turn_index+=1
