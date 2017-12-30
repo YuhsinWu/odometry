@@ -1,0 +1,19 @@
+<launch>
+	<arg name="veh" default="$(env VEHICLE_NAME)"/>
+
+	<include file="$(find odometry)/launch/encoder_tracking.launch" />
+
+
+	<!-- ============================ Open motors to launch the wheels ============================== -->
+    <remap from="inverse_kinematics_node/wheels_cmd" to="wheels_driver_node/wheels_cmd" />
+	<remap from="inverse_kinematics_node/car_cmd" to="encoder_tracking/car_cmd"/>
+	<include file="$(find dagu_car)/launch/inverse_kinematics_node.launch">
+		<arg name="veh" value="$(arg veh)"/>
+	</include>
+	<!-- Wheel Driver -->
+	<include file="$(find dagu_car)/launch/wheels_driver_node.launch">
+		<arg name="veh" value="$(arg veh)"/>
+	</include>
+
+
+</launch>
