@@ -1,8 +1,11 @@
 <launch>
 	<arg name="veh" default="$(env VEHICLE_NAME)"/>
 
-	<include file="$(find odometry)/launch/encoder_tracking.launch" />
+	<include file="$(find duckietown)/machines"/>
 
+	<include file="$(find odometry)/launch/encoder_tracking.launch" >
+		<arg name="veh" value="$(arg veh)"/>
+	</include>
 
 	<!-- ============================ Open motors to launch the wheels ============================== -->
     <remap from="inverse_kinematics_node/wheels_cmd" to="wheels_driver_node/wheels_cmd" />
