@@ -9,8 +9,7 @@ turn_dir=[1,0,0,1]
 for i in range(0,17):
 	target[i]=target[i]*48+23
 
-tolrce=5
-
+tolrce=3
 class wheelOdometry(object):
 	def __init__(self):
 		self.node_name = rospy.get_name()
@@ -23,14 +22,12 @@ class wheelOdometry(object):
 		self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
 		rospy.on_shutdown(self.custom_shutdown) # shutdown method
 		rospy.loginfo("[%s] Initialized " %self.node_name)
-
 	def custom_shutdown(self):
 		rospy.loginfo("[%s] Shutting down..." %self.node_name)
 		cmd = Twist2DStamped()
 		cmd.v=0
 		cmd.omega=0
 		self.pub_car_cmd.publish(cmd)
-
 	def cbPose(self, msg):
 		self.posx = msg.data[0]*100
 		self.posy = msg.data[1]*100
@@ -54,9 +51,9 @@ class wheelOdometry(object):
 				d_error = -(self.posy-target[self.index+1])
 				d_target = self.posx-target[self.index]
 			elif dir_x<0: #left
-				print 'leftt'
-				d_error = self.posx-target[self.index]
-				d_target = self.posy-target[self.index+1]
+				print 'left'
+				d_error = self.posy-target[self.index+1]
+				d_target = self.posx-target[self.index]
 		if d_error<-tolrce:#turn right
 			print 'turn right'
 			cmd.v= 0.05
@@ -74,10 +71,14 @@ class wheelOdometry(object):
 				print 'turn_right_90'
 				cmd.v=0.05
 				cmd.omega=-1.57
+				self.pub_car_cmd.publish(cmd)
+				rospy.sleep(0.35)
 			else: #turn_left_90
 				print 'turn_left_90'
 				cmd.v=0.05
 				cmd.omega=1.57
+				self.pub_car_cmd.publish(cmd)
+                                rospy.sleep(0.35)
 			self.turn_index+=1
 			self.index+=2
 
