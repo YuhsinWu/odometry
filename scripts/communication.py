@@ -7,7 +7,7 @@ import time
 import rospy
 from duckietown_msgs.msg import Twist2DStamped
 port = '/dev/ttyACM0'
-UDP_IP = "192.168.0.10"  #######change here########
+UDP_IP = "192.168.1.194"  #######change here########
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET,
 		     socket.SOCK_DGRAM)
@@ -49,7 +49,7 @@ class Tracking:
             self.posx = int(slist[0])
             self.posy = int(slist[1].strip(','))
             print self.posx, self.posy
-            if self.index<=11
+            if self.index<=11:
                 self.follow_forward()
             else:
                 self.follow_backward()
@@ -90,22 +90,25 @@ class Tracking:
                 cmd.v=0.05
                 cmd.omega=-1.57
                 self.pub_car_cmd.publish(cmd)
-                rospy.sleep(0.35)
+		rospy.sleep(0.25)
             else: #turn_left_90
                 print 'turn_left_90'
                 cmd.v=0.05
                 cmd.omega=1.57
                 self.pub_car_cmd.publish(cmd)
-                                rospy.sleep(0.35)
+		rospy.sleep(0.25)
             self.turn_index+=1
             self.index+=2
-
         self.pub_car_cmd.publish(cmd)
-
+        rospy.sleep(0.1)
+        cmd.v=0
+        cmd.omega=0
+        self.pub_car_cmd.publish(cmd)
     def follow_backward(self):
-        
-
-
+        cmd = Twist2DStamped()
+	cmd.v=0
+	self.pub_car_cmd.publish(cmd)
+	   	    
     def custom_shutdown(self):
         rospy.loginfo("[%s] Shutting down..." %self.node_name)
 
