@@ -4,9 +4,7 @@ import serial
 import json
 import syslog,time,sys
 import time
-import rospy
-from duckietown_msgs.msg import Twist2DStamped
-port = '/dev/ttyACM0'
+from Adafruit_MotorHAT import Adafruit_MotorHAT
 UDP_IP = "192.168.1.194"  #######change here########
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET,
@@ -22,14 +20,18 @@ print target
 tolrce=5
 class Tracking:
     def __init__(self):
-        self.node_name = rospy.get_name()   
-        rospy.on_shutdown(self.custom_shutdown)
-        self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
+        self.motorhat = Adafruit_MotorHAT(addr= 0x60)
+        self.leftMotor  = self.motorhat.getMotor(1)
+        self.rightMotor = self.motorhat.getMotor(2)
+        self.leftMotor.setSpeed(10)
+        self.rightMotor.setSpeed(10)
+        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
         self.posx=0
         self.posy=0
         self.index=2
         self.turn_index=0
-        self.communication()    
+        self.communication()
 
     def communication(self):
         while(1):
@@ -56,7 +58,6 @@ class Tracking:
 
 
     def follow_forward(self):
-        cmd = Twist2DStamped()
         dir_x = target[self.index] - target[self.index-2]
         dir_y = target[self.index+1] - target[self.index-1]
         if dir_x==0:  #front
@@ -74,48 +75,49 @@ class Tracking:
                 d_target = self.posx-target[self.index]
         if d_error<-tolrce:#turn right
             print 'turn right'
-            cmd.v= 0.05
-            cmd.omega=-0.3
+            self.leftMotor.setSpeed(60)
+            self.rightMotor.setSpeed(40)
         elif d_error>tolrce:#turn_left
             print'turn_left'
-            cmd.v=0.05
-            cmd.omega=0.3
+            self.leftMotor.setSpeed(40)
+            self.rightMotor.setSpeed(60)
         else:  #straight_forward
             print 'straight_forward'
-            cmd.v=0.05
-            cmd.omega=0
+            self.leftMotor.setSpeed(50)
+            self.rightMotor.setSpeed(50)
         if abs(d_target)<tolrce: #reach goal
             if turn_dir[self.turn_index]==1: #turn_right_90
                 print 'turn_right_90'
-                cmd.v=0.05
-                cmd.omega=-1.57
-                self.pub_car_cmd.publish(cmd)
-		rospy.sleep(0.25)
+                self.leftMotor.setSpeed(60)
+                self.rightMotor.setSpeed(40)
+                self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+                self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+                time.sleep(0.25)
             else: #turn_left_90
                 print 'turn_left_90'
-                cmd.v=0.05
-                cmd.omega=1.57
-                self.pub_car_cmd.publish(cmd)
-		rospy.sleep(0.25)
+                self.leftMotor.setSpeed(40)
+                self.rightMotor.setSpeed(60)
+                self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+                self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+                time.sleep(0.25)
             self.turn_index+=1
             self.index+=2
-        self.pub_car_cmd.publish(cmd)
-        rospy.sleep(0.1)
-        cmd.v=0
-        cmd.omega=0
-        self.pub_car_cmd.publish(cmd)
+        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+        time.sleep(0.1)
+        self.leftMotor.setSpeed(0)
+        self.rightMotor.setSpeed(0)
+        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
     def follow_backward(self):
-        cmd = Twist2DStamped()
-	cmd.v=0
-	self.pub_car_cmd.publish(cmd)
-	   	    
-    def custom_shutdown(self):
-        rospy.loginfo("[%s] Shutting down..." %self.node_name)
+        pwml=0
+        pwmr=0
+        self.leftMotor.setSpeed(pwml)
+        self.rightMotor.setSpeed(pwmr)
 
 if __name__ == '__main__':
 
     try:
-        rospy.init_node('tracking', anonymous = False)
         Track = Tracking()
 
     except KeyboardInterrupt:
