@@ -5,7 +5,7 @@ import json
 import syslog,time,sys
 import time
 from Adafruit_MotorHAT import Adafruit_MotorHAT
-UDP_IP = "192.168.1.194"  #######change here########
+UDP_IP = "192.168.0.7"  #######change here########
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET,
 		     socket.SOCK_DGRAM)
@@ -23,10 +23,6 @@ class Tracking:
         self.motorhat = Adafruit_MotorHAT(addr= 0x60)
         self.leftMotor  = self.motorhat.getMotor(1)
         self.rightMotor = self.motorhat.getMotor(2)
-        self.leftMotor.setSpeed(10)
-        self.rightMotor.setSpeed(10)
-        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
-        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
         self.posx=0
         self.posy=0
         self.index=2
@@ -114,6 +110,12 @@ class Tracking:
         pwmr=0
         self.leftMotor.setSpeed(pwml)
         self.rightMotor.setSpeed(pwmr)
+    def __del__(self):
+        print 'died'
+        self.leftMotor.setSpeed(0)
+        self.rightMotor.setSpeed(0)
+        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
 
 if __name__ == '__main__':
 
@@ -121,5 +123,4 @@ if __name__ == '__main__':
         Track = Tracking()
 
     except KeyboardInterrupt:
-
-        ser.close()
+        print 'died'
