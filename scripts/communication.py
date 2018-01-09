@@ -4,6 +4,7 @@ import serial
 import json
 import syslog,time,sys
 import time
+import math
 from Adafruit_MotorHAT import Adafruit_MotorHAT
 UDP_IP = "192.168.0.7"  #######change here########
 UDP_PORT = 5005
@@ -77,8 +78,7 @@ class Tracking:
             print 'front'
             d_error = self.posx-target[self.index]
             d_target = self.posy-target[self.index+1]
-        elif direc[self.turn_index]==2:
-              #right
+        elif direc[self.turn_index]==2:#right
             print 'right'
             d_error = -(self.posy-target[self.index+1])
             d_target = self.posx-target[self.index]
@@ -103,12 +103,24 @@ class Tracking:
             dir_x=self.posx-old_posx
             dir_y=self,posy-old_posy
             if direc[self.turn_index]==1:  #front
-                if dir_y/dir_x<3:
-                    print ''
-            elif direc[self.turn_index]==2:
-                print ''  
+                angle_error=(math.pi/2)-math.atan(dir_y/dir_x)    
+            elif direc[self.turn_index]==2:#right
+                angle_error= -math.atan(dir_y/dir_x)
             elif direc[self.turn_index]==3: #left
-                print ''
+                angle_error=(math.pi)-math.atan(dir_y/dir_x)
+            print angle_error    
+            if angle_error>math.pi/18:
+                self.leftMotor.setSpeed(50)
+                self.rightMotor.setSpeed(50)
+                self.leftMotor.run(Adafruit_MotorHAT.BACKWARD)
+                self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+                time.sleep(0.78*angle_error/(math.pi/2))
+            elif angle_error<-math.pi/18:
+                self.leftMotor.setSpeed(50)
+                self.rightMotor.setSpeed(50)
+                self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+                self.rightMotor.run(Adafruit_MotorHAT.BACKWARD)
+                time.sleep(0.8*angle_error/(math.pi/2))    
         #---------------------------------------------------------    
             if turn_dir[self.turn_index]==1: #turn_right_90
                 print '---------turn_right_90-----------'
@@ -165,9 +177,30 @@ class Tracking:
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(50)
         if d_target>-7: #reach goal
+            #---------------------angle control----------------------
             dir_x=self.posx-old_posx
             dir_y=self,posy-old_posy
-
+            if direc[self.turn_index]==4:  
+                angle_error=(math.pi*3/2)-math.atan(dir_y/dir_x)    
+            elif direc[self.turn_index]==2:#right
+                angle_error= -math.atan(dir_y/dir_x)
+            elif direc[self.turn_index]==3: #left
+                angle_error=(math.pi)-math.atan(dir_y/dir_x)
+            print angle_error    
+            if angle_error>math.pi/18:
+                self.leftMotor.setSpeed(50)
+                self.rightMotor.setSpeed(50)
+                self.leftMotor.run(Adafruit_MotorHAT.BACKWARD)
+                self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+                time.sleep(0.78*angle_error/(math.pi/2))
+            elif angle_error<-math.pi/18:
+                self.leftMotor.setSpeed(50)
+                self.rightMotor.setSpeed(50)
+                self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+                self.rightMotor.run(Adafruit_MotorHAT.BACKWARD)
+                time.sleep(0.8*angle_error/(math.pi/2))    
+        #---------------------------------------------------------    
+            
             if turn_dir[self.turn_index]==1: #turn_right_90
                 print 'turn_right_90'
                 self.leftMotor.setSpeed(150)
