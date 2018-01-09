@@ -38,9 +38,9 @@ class Tracking:
         self.turn_index=0
         self.leftMotor.setSpeed(50)
         self.rightMotor.setSpeed(50)
-        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
-        self.rightMotor.run(Adafruit_MotorHAT.BACKWARD)
-        time.sleep(0.4)
+        self.leftMotor.run(Adafruit_MotorHAT.BACKWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+        time.sleep(0.78/3)
         self.leftMotor.setSpeed(0)
         self.rightMotor.setSpeed(0)
         self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
@@ -104,16 +104,11 @@ class Tracking:
             dir_y=self,posy-old_posy
             if direc[self.turn_index]==1:  #front
                 if dir_y/dir_x<3:
-
-                d_error = self.posx-target[self.index]
-                d_target = self.posy-target[self.index+1]
+                    print ''
             elif direc[self.turn_index]==2:
-              #right
-                print 'right'
-                d_error = -(self.posy-target[self.index+1])
-                d_target = self.posx-target[self.index]
+                print ''  
             elif direc[self.turn_index]==3: #left
-            
+                print ''
         #---------------------------------------------------------    
             if turn_dir[self.turn_index]==1: #turn_right_90
                 print '---------turn_right_90-----------'
