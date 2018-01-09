@@ -5,16 +5,24 @@ import json
 import syslog,time,sys
 import time
 from Adafruit_MotorHAT import Adafruit_MotorHAT
-UDP_IP = "192.168.1.194"  #######change here########
+UDP_IP = "192.168.0.7"  #######change here########
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET,
 		     socket.SOCK_DGRAM)
 
 sock.bind((UDP_IP,UDP_PORT))
-
-target=[22,50, 60,50 ,68,107, 68,140, 42,156, 24,190, 25,72, 69,67, 69,19]
-direc=[1, 2, 1 ,1,3, 1, 4, 2, 4]
-turn_dir=[1, 0,2, 0, 1, 2, 1, 0, 2]
+#target coordinate
+target=[22,50, 60,55 ,68,107, 68,140, 42,150, 24,190, 25,72, 69,67, 69,19]
+#1:toward front
+#2:toward right
+#3:toward left
+#4:toward back
+direc=[1, 2, 1 , 1, 3, 1, 4, 2, 4]
+#0:turn left 90
+#1:turn right 90
+#2:don't turn
+#3:the end
+turn_dir=[1, 0, 2, 0, 1, 2, 1, 0, 3]
 old_posx=0
 old_posy=0
 print target
@@ -40,8 +48,6 @@ class Tracking:
 
             #ard.flush()
 
-            print "data"
-
             print (send)
 
             slist = send.split('.') 
@@ -56,8 +62,8 @@ class Tracking:
 
     def follow_forward(self):
         print self.index/2
-        if direc[self.turn_index]==1:  #forward
-            print 'forward'
+        if direc[self.turn_index]==1:  #front
+            print 'front'
             d_error = self.posx-target[self.index]
             d_target = self.posy-target[self.index+1]
         elif direc[self.turn_index]==2:
@@ -69,11 +75,11 @@ class Tracking:
             print 'left'
             d_error = self.posy-target[self.index+1]
             d_target = -(self.posx-target[self.index])
-        if d_error<-tolrce:#turn right
+        if d_error<-tolrce:#if error is negative, turn right
             print 'turn right'
             self.leftMotor.setSpeed(60)
             self.rightMotor.setSpeed(50)
-        elif d_error>tolrce:#turn_left
+        elif d_error>tolrce:#if error is positive, turn_left
             print'turn_left'
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(60)
@@ -82,23 +88,22 @@ class Tracking:
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(50)
         if d_target>-7: #reach goal
-            self.
             if turn_dir[self.turn_index]==1: #turn_right_90
-                print 'turn_right_90'
+                print '---------turn_right_90-----------'
                 self.leftMotor.setSpeed(150)
                 self.rightMotor.setSpeed(0)
                 self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
                 self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
                 time.sleep(0.35)
             elif turn_dir[self.turn_index]==0: #turn_left_90
-                print 'turn_left_90'
+                print '---------turn_left_90------------'
                 self.leftMotor.setSpeed(0)
                 self.rightMotor.setSpeed(150)
                 self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
                 self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
-                time.sleep(0.4)
+                time.sleep(0.38)
             else:#reach final goal
-                print 'finish forward part'
+                print '-----------no turn---------------'
             self.turn_index+=1
             self.index+=2
         self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
@@ -152,8 +157,8 @@ class Tracking:
                 self.leftMotor.run(Adafruit_MotorHAT.BACKWARD)
                 self.rightMotor.run(Adafruit_MotorHAT.BACKWARD)
                 time.sleep(0.38)
-            else:#reach final goal
-                print 'finish'
+            elif turn_dir[self.turn_index]==3:#reach final goal
+                print 'the end'
                 self.__del__
             self.turn_index+=1
             self.index+=2
