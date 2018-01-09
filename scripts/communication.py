@@ -5,16 +5,18 @@ import json
 import syslog,time,sys
 import time
 from Adafruit_MotorHAT import Adafruit_MotorHAT
-UDP_IP = "192.168.0.7"  #######change here########
+UDP_IP = "192.168.1.194"  #######change here########
 UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET,
 		     socket.SOCK_DGRAM)
 
 sock.bind((UDP_IP,UDP_PORT))
 
-target=[22,54, 60,70, 70,140, 38,156, 24,190, 25,72, 69,67, 69,19]
-direc=[1, 2, 1, 3, 1, 4, 2, 4]
-turn_dir=[1, 0, 0, 1, 2, 1, 0, 2]
+target=[22,50, 60,50 ,68,107, 68,140, 42,156, 24,190, 25,72, 69,67, 69,19]
+direc=[1, 2, 1 ,1,3, 1, 4, 2, 4]
+turn_dir=[1, 0,2, 0, 1, 2, 1, 0, 2]
+old_posx=0
+old_posy=0
 print target
 tolrce=3
 class Tracking:
@@ -46,7 +48,7 @@ class Tracking:
             self.posx = int(slist[0])
             self.posy = int(slist[1].strip(','))
             print self.posx, self.posy
-            if self.index<9:
+            if self.index<11:
                 self.follow_forward()
             else:
                 self.follow_backward()
@@ -80,7 +82,8 @@ class Tracking:
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(50)
         if d_target>-7: #reach goal
-            if urn_dir[self.turn_index]==1: #turn_right_90
+            self.
+            if turn_dir[self.turn_index]==1: #turn_right_90
                 print 'turn_right_90'
                 self.leftMotor.setSpeed(150)
                 self.rightMotor.setSpeed(0)
@@ -105,6 +108,8 @@ class Tracking:
         self.rightMotor.setSpeed(0)
         self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
         self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+        old_posx=self.posx
+        old_posy=self.posy
     def follow_backward(self):
         print self.index/2
         if direc[self.turn_index]==4:  #backward
@@ -133,7 +138,7 @@ class Tracking:
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(50)
         if d_target>-7: #reach goal
-            if urn_dir[self.turn_index]==1: #turn_right_90
+            if turn_dir[self.turn_index]==1: #turn_right_90
                 print 'turn_right_90'
                 self.leftMotor.setSpeed(150)
                 self.rightMotor.setSpeed(0)
