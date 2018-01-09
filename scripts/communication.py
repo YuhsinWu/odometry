@@ -36,6 +36,17 @@ class Tracking:
         self.posy=0
         self.index=0
         self.turn_index=0
+        self.leftMotor.setSpeed(50)
+        self.rightMotor.setSpeed(50)
+        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.BACKWARD)
+        time.sleep(0.4)
+        self.leftMotor.setSpeed(0)
+        self.rightMotor.setSpeed(0)
+        self.leftMotor.run(Adafruit_MotorHAT.FORWARD)
+        self.rightMotor.run(Adafruit_MotorHAT.FORWARD)
+        
+
         self.communication()
 
     def communication(self):
@@ -88,6 +99,22 @@ class Tracking:
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(50)
         if d_target>-7: #reach goal
+        #---------------------angle control----------------------
+            dir_x=self.posx-old_posx
+            dir_y=self,posy-old_posy
+            if direc[self.turn_index]==1:  #front
+                if dir_y/dir_x<3:
+
+                d_error = self.posx-target[self.index]
+                d_target = self.posy-target[self.index+1]
+            elif direc[self.turn_index]==2:
+              #right
+                print 'right'
+                d_error = -(self.posy-target[self.index+1])
+                d_target = self.posx-target[self.index]
+            elif direc[self.turn_index]==3: #left
+            
+        #---------------------------------------------------------    
             if turn_dir[self.turn_index]==1: #turn_right_90
                 print '---------turn_right_90-----------'
                 self.leftMotor.setSpeed(150)
@@ -143,6 +170,9 @@ class Tracking:
             self.leftMotor.setSpeed(50)
             self.rightMotor.setSpeed(50)
         if d_target>-7: #reach goal
+            dir_x=self.posx-old_posx
+            dir_y=self,posy-old_posy
+
             if turn_dir[self.turn_index]==1: #turn_right_90
                 print 'turn_right_90'
                 self.leftMotor.setSpeed(150)
