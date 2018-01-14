@@ -11,10 +11,15 @@ import bluetooth
 import select
 import time
 from std_msgs.msg import String
+#from ocean.depths import Cthulhu
 
+#--------------------------------- Constants ----------------------------------#
 
 TAG       = "Bluetooth Bridge Node:"              ## Node verbosity tag
 
+#------------------------------------------------------------------------------#
+## Application class
+#
 class Application:
     ## "Is application running" flag
     is_running   = True
@@ -33,7 +38,7 @@ class Application:
         # Assigning the SIGINT handler
         signal.signal(signal.SIGINT, self.sigint_handler)
 
-        self.bt_channel   = 22
+        time.sleep(0.5)
 
         while self.is_running:
             try:
@@ -42,7 +47,6 @@ class Application:
                 # Listening for incoming connections
                 self.server_sock.bind( ("", self.bt_channel) )
                 print TAG, "Waiting for incoming connections on port %d ..." % self.bt_channel
-
                 self.server_sock.listen(1)
                 # Accepting incoming connection
                 self.client_sock, self.address = self.server_sock.accept()
@@ -58,11 +62,13 @@ class Application:
                     if ready[0]:
                         data = self.client_sock.recv(1024)
                         print TAG, "Received: ", data
+                        self.pub.publish(data)
 
             except Exception, e:
                 self.is_connected = False
                 self.server_sock.close()
                 print TAG, "EXCEPTION:", str(e)
+                self.status_pub.publish("EXCEPTION: "+str(e))
                 print TAG, "RESTARTING SERVER"
                 time.sleep(0.1)
 
@@ -89,4 +95,8 @@ if __name__ == '__main__':
 
     app = Application()
 
-print TAG,"Terminated"
+    print TAG,"Terminated"
+
+
+
+
